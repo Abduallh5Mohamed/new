@@ -109,7 +109,7 @@ export class SignUpComponent {
     }
     return '';
   }
-}
+
   private routeToUserDashboard(userType: string): void {
     switch (userType) {
       case 'admin':
@@ -127,3 +127,4 @@ export class SignUpComponent {
         break;
     }
   }
+}
