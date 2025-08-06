@@ -124,38 +124,51 @@ export class AuthService {
 
   // Send email verification
   async sendEmailVerification(): Promise<void> {
-    const user = this.auth.currentUser;
-    if (user) {
-      await sendEmailVerification(user);
+    try {
+      const user = this.auth.currentUser;
+      if (user) {
+        await sendEmailVerification(user, {
+          url: window.location.origin + '/auth/login',
+          handleCodeInApp: false
+        });
+      }
+    } catch (error) {
+      console.error('Error sending verification email:', error);
+      throw new Error('Failed to send verification email. Please try again.');
     }
   }
 
   // Check email verification status
   async checkEmailVerification(): Promise<boolean> {
-    const user = this.auth.currentUser;
-    if (user) {
-      await user.reload();
-      const isVerified = user.emailVerified;
-      
-      // Update user data in Firestore
-      if (isVerified) {
-        await updateDoc(doc(this.firestore, 'users', user.uid), {
-          emailVerified: true
-        });
+    try {
+      const user = this.auth.currentUser;
+      if (user) {
+        await user.reload();
+        const isVerified = user.emailVerified;
         
-        // Update local user data
-        const currentData = this.userDataSubject.value;
-        if (currentData) {
-          this.userDataSubject.next({
-            ...currentData,
+        // Update user data in Firestore
+        if (isVerified) {
+          await updateDoc(doc(this.firestore, 'users', user.uid), {
             emailVerified: true
           });
+          
+          // Update local user data
+          const currentData = this.userDataSubject.value;
+          if (currentData) {
+            this.userDataSubject.next({
+              ...currentData,
+              emailVerified: true
+            });
+          }
         }
+        
+        return isVerified;
       }
-      
-      return isVerified;
+      return false;
+    } catch (error) {
+      console.error('Error checking email verification:', error);
+      return false;
     }
-    return false;
   }
 
   // Sign out

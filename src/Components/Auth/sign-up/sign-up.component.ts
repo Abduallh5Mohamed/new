@@ -28,7 +28,6 @@ export class SignUpComponent {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required]],
-      userType: ['user', [Validators.required]],
       acceptTerms: [false, [Validators.requiredTrue]]
     }, { validators: this.passwordMatchValidator });
   }
@@ -51,8 +50,8 @@ export class SignUpComponent {
       this.errorMessage = '';
 
       try {
-        const { displayName, email, password, userType } = this.signUpForm.value;
-        await this.authService.signUp(email, password, displayName, userType);
+        const { displayName, email, password } = this.signUpForm.value;
+        await this.authService.signUp(email, password, displayName, 'user');
         
         // Always route to pending verification after signup
         this.router.navigate(['/auth/pending-verification']);

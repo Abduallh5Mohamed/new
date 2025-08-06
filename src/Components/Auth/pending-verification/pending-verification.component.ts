@@ -74,10 +74,10 @@ export class PendingVerificationComponent implements OnInit, OnDestroy {
     try {
       await this.authService.sendEmailVerification();
       this.resendSuccess = true;
-      this.resendMessage = 'Verification email sent successfully!';
+      this.resendMessage = 'Verification email sent successfully! Please check your inbox and spam folder.';
     } catch (error: any) {
       this.resendSuccess = false;
-      this.resendMessage = 'Failed to send verification email. Please try again.';
+      this.resendMessage = error || 'Failed to send verification email. Please try again.';
     } finally {
       this.isResending = false;
     }
