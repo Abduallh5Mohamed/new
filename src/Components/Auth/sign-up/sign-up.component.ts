@@ -28,6 +28,7 @@ export class SignUpComponent {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required]],
+      userType: ['user', [Validators.required]],
       acceptTerms: [false, [Validators.requiredTrue]]
     }, { validators: this.passwordMatchValidator });
   }
@@ -53,8 +54,8 @@ export class SignUpComponent {
         const { displayName, email, password, userType } = this.signUpForm.value;
         await this.authService.signUp(email, password, displayName, userType);
         
-        // Route to appropriate dashboard based on user type
-        this.routeToUserDashboard(userType);
+        // Always route to pending verification after signup
+        this.router.navigate(['/auth/pending-verification']);
       } catch (error: any) {
         this.errorMessage = error;
       } finally {
@@ -69,7 +70,12 @@ export class SignUpComponent {
 
     try {
       const userData = await this.authService.signInWithGoogle();
-      this.routeToUserDashboard(userData.role);
+      // Check if email is verified for social logins
+      if (userData.emailVerified) {
+        this.routeToUserDashboard(userData.role);
+      } else {
+        this.router.navigate(['/auth/pending-verification']);
+      }
     } catch (error: any) {
       this.errorMessage = error;
     } finally {
@@ -83,7 +89,12 @@ export class SignUpComponent {
 
     try {
       const userData = await this.authService.signInWithFacebook();
-      this.routeToUserDashboard(userData.role);
+      // Check if email is verified for social logins
+      if (userData.emailVerified) {
+        this.routeToUserDashboard(userData.role);
+      } else {
+        this.router.navigate(['/auth/pending-verification']);
+      }
     } catch (error: any) {
       this.errorMessage = error;
     } finally {
