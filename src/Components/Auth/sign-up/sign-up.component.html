@@ -96,6 +96,76 @@
         </div>
       </div>
 
+      <!-- User Type Selection -->
+      <div class="form-group">
+        <label class="form-label">Select Your Role</label>
+        <div class="user-type-selection">
+          <div class="radio-group">
+            <label class="radio-label" for="user">
+              <input
+                type="radio"
+                id="user"
+                name="userType"
+                value="user"
+                formControlName="userType"
+              />
+              <span class="radio-custom"></span>
+              <div class="radio-content">
+                <i class="fas fa-user"></i>
+                <span>Customer</span>
+              </div>
+            </label>
+
+            <label class="radio-label" for="driver">
+              <input
+                type="radio"
+                id="driver"
+                name="userType"
+                value="driver"
+                formControlName="userType"
+              />
+              <span class="radio-custom"></span>
+              <div class="radio-content">
+                <i class="fas fa-car"></i>
+                <span>Driver</span>
+              </div>
+            </label>
+
+            <label class="radio-label" for="technician">
+              <input
+                type="radio"
+                id="technician"
+                name="userType"
+                value="technician"
+                formControlName="userType"
+              />
+              <span class="radio-custom"></span>
+              <div class="radio-content">
+                <i class="fas fa-tools"></i>
+                <span>Technician</span>
+              </div>
+            </label>
+
+            <label class="radio-label" for="admin">
+              <input
+                type="radio"
+                id="admin"
+                name="userType"
+                value="admin"
+                formControlName="userType"
+              />
+              <span class="radio-custom"></span>
+              <div class="radio-content">
+                <i class="fas fa-user-shield"></i>
+                <span>Admin</span>
+              </div>
+            </label>
+          </div>
+        </div>
+        <div class="error-message" *ngIf="signUpForm.get('userType')?.invalid && signUpForm.get('userType')?.touched">
+          Please select your role
+        </div>
+      </div>
       <!-- Terms and Conditions -->
       <div class="form-group checkbox-group">
         <label class="checkbox-label">

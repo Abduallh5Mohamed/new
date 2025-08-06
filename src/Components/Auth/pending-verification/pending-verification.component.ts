@@ -55,7 +55,13 @@ export class PendingVerificationComponent implements OnInit, OnDestroy {
       try {
         const isVerified = await this.authService.checkEmailVerification();
         if (isVerified) {
-          this.router.navigate(['/dashboard']);
+          // Get user data and route to appropriate dashboard
+          const userData = this.authService.getUserData();
+          if (userData) {
+            this.routeToUserDashboard(userData.role);
+          } else {
+            this.router.navigate(['/customer']);
+          }
         }
       } catch (error) {
         console.error('Error checking verification:', error);
@@ -94,5 +100,23 @@ export class PendingVerificationComponent implements OnInit, OnDestroy {
     
     const maskedLocal = localPart[0] + '*'.repeat(localPart.length - 2) + localPart[localPart.length - 1];
     return `${maskedLocal}@${domain}`;
+  }
+
+  private routeToUserDashboard(userType: string): void {
+    switch (userType) {
+      case 'admin':
+        this.router.navigate(['/admin']);
+        break;
+      case 'driver':
+        this.router.navigate(['/driver']);
+        break;
+      case 'technician':
+        this.router.navigate(['/technician']);
+        break;
+      case 'user':
+      default:
+        this.router.navigate(['/customer']);
+        break;
+    }
   }
 }

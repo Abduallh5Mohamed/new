@@ -36,11 +36,11 @@ export class LoginComponent {
 
       try {
         const { email, password } = this.loginForm.value;
-        await this.authService.signIn(email, password);
+        const userData = await this.authService.signIn(email, password);
         
         // Check if email is verified
         if (this.authService.isEmailVerified()) {
-          this.router.navigate(['/dashboard']);
+          this.routeToUserDashboard(userData.role);
         } else {
           this.router.navigate(['/auth/pending-verification']);
         }
@@ -57,8 +57,8 @@ export class LoginComponent {
     this.errorMessage = '';
 
     try {
-      await this.authService.signInWithGoogle();
-      this.router.navigate(['/dashboard']);
+      const userData = await this.authService.signInWithGoogle();
+      this.routeToUserDashboard(userData.role);
     } catch (error: any) {
       this.errorMessage = error;
     } finally {
@@ -71,8 +71,8 @@ export class LoginComponent {
     this.errorMessage = '';
 
     try {
-      await this.authService.signInWithFacebook();
-      this.router.navigate(['/dashboard']);
+      const userData = await this.authService.signInWithFacebook();
+      this.routeToUserDashboard(userData.role);
     } catch (error: any) {
       this.errorMessage = error;
     } finally {
@@ -91,5 +91,23 @@ export class LoginComponent {
       if (field.errors['email']) return 'Please enter a valid email';
     }
     return '';
+  }
+
+  private routeToUserDashboard(userType: string): void {
+    switch (userType) {
+      case 'admin':
+        this.router.navigate(['/admin']);
+        break;
+      case 'driver':
+        this.router.navigate(['/driver']);
+        break;
+      case 'technician':
+        this.router.navigate(['/technician']);
+        break;
+      case 'user':
+      default:
+        this.router.navigate(['/customer']);
+        break;
+    }
   }
 }

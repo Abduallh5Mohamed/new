@@ -9,7 +9,7 @@ export interface UserData {
   uid: string;
   email: string;
   displayName: string;
-  role: 'user' | 'admin' | 'technician';
+  role: 'user' | 'admin' | 'technician' | 'driver';
   createdAt: Date;
   lastLoginAt: Date;
   emailVerified: boolean;
@@ -42,7 +42,7 @@ export class AuthService {
   }
 
   // Sign up with email and password
-  async signUp(email: string, password: string, displayName: string): Promise<void> {
+  async signUp(email: string, password: string, displayName: string, userType: string = 'user'): Promise<UserData> {
     try {
       const credential = await createUserWithEmailAndPassword(this.auth, email, password);
       
@@ -57,7 +57,7 @@ export class AuthService {
         uid: credential.user.uid,
         email: credential.user.email!,
         displayName,
-        role: 'user',
+        role: userType as 'user' | 'admin' | 'technician' | 'driver',
         createdAt: new Date(),
         lastLoginAt: new Date(),
         emailVerified: false
@@ -66,32 +66,42 @@ export class AuthService {
       await setDoc(doc(this.firestore, 'users', credential.user.uid), userData);
       this.userDataSubject.next(userData);
       
+      return userData;
     } catch (error: any) {
       throw this.handleAuthError(error);
     }
   }
 
   // Sign in with email and password
-  async signIn(email: string, password: string): Promise<void> {
+  async signIn(email: string, password: string): Promise<UserData> {
     try {
       const credential = await signInWithEmailAndPassword(this.auth, email, password);
       
       // Update last login time
       await this.updateLastLogin(credential.user.uid);
       
+      // Load and return user data
+      const userDoc = await getDoc(doc(this.firestore, 'users', credential.user.uid));
+      if (userDoc.exists()) {
+        const userData = userDoc.data() as UserData;
+        this.userDataSubject.next(userData);
+        return userData;
+      }
+      
+      throw new Error('User data not found');
     } catch (error: any) {
       throw this.handleAuthError(error);
     }
   }
 
   // Sign in with Google
-  async signInWithGoogle(): Promise<void> {
+  async signInWithGoogle(): Promise<UserData> {
     try {
       const provider = new GoogleAuthProvider();
       const credential = await signInWithPopup(this.auth, provider);
       
       // Check if user exists in Firestore, if not create profile
-      await this.createUserProfileIfNotExists(credential.user);
+      return await this.createUserProfileIfNotExists(credential.user);
       
     } catch (error: any) {
       throw this.handleAuthError(error);
@@ -99,13 +109,13 @@ export class AuthService {
   }
 
   // Sign in with Facebook
-  async signInWithFacebook(): Promise<void> {
+  async signInWithFacebook(): Promise<UserData> {
     try {
       const provider = new FacebookAuthProvider();
       const credential = await signInWithPopup(this.auth, provider);
       
       // Check if user exists in Firestore, if not create profile
-      await this.createUserProfileIfNotExists(credential.user);
+      return await this.createUserProfileIfNotExists(credential.user);
       
     } catch (error: any) {
       throw this.handleAuthError(error);
@@ -198,7 +208,7 @@ export class AuthService {
     }
   }
 
-  private async createUserProfileIfNotExists(user: User): Promise<void> {
+  private async createUserProfileIfNotExists(user: User): Promise<UserData> {
     const userDoc = await getDoc(doc(this.firestore, 'users', user.uid));
     
     if (!userDoc.exists()) {
@@ -214,8 +224,12 @@ export class AuthService {
       
       await setDoc(doc(this.firestore, 'users', user.uid), userData);
       this.userDataSubject.next(userData);
+      return userData;
     } else {
       await this.updateLastLogin(user.uid);
+      const userData = userDoc.data() as UserData;
+      this.userDataSubject.next(userData);
+      return userData;
     }
   }
 

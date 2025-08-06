@@ -28,6 +28,7 @@ export class SignUpComponent {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required]],
+      userType: ['user', [Validators.required]],
       acceptTerms: [false, [Validators.requiredTrue]]
     }, { validators: this.passwordMatchValidator });
   }
@@ -50,9 +51,11 @@ export class SignUpComponent {
       this.errorMessage = '';
 
       try {
-        const { displayName, email, password } = this.signUpForm.value;
-        await this.authService.signUp(email, password, displayName);
-        this.router.navigate(['/auth/pending-verification']);
+        const { displayName, email, password, userType } = this.signUpForm.value;
+        await this.authService.signUp(email, password, displayName, userType);
+        
+        // Route to appropriate dashboard based on user type
+        this.routeToUserDashboard(userType);
       } catch (error: any) {
         this.errorMessage = error;
       } finally {
@@ -66,8 +69,8 @@ export class SignUpComponent {
     this.errorMessage = '';
 
     try {
-      await this.authService.signInWithGoogle();
-      this.router.navigate(['/dashboard']);
+      const userData = await this.authService.signInWithGoogle();
+      this.routeToUserDashboard(userData.role);
     } catch (error: any) {
       this.errorMessage = error;
     } finally {
@@ -80,8 +83,8 @@ export class SignUpComponent {
     this.errorMessage = '';
 
     try {
-      await this.authService.signInWithFacebook();
-      this.router.navigate(['/dashboard']);
+      const userData = await this.authService.signInWithFacebook();
+      this.routeToUserDashboard(userData.role);
     } catch (error: any) {
       this.errorMessage = error;
     } finally {
@@ -106,5 +109,23 @@ export class SignUpComponent {
       if (field.errors['passwordMismatch']) return 'Passwords do not match';
     }
     return '';
+  }
+
+  private routeToUserDashboard(userType: string): void {
+    switch (userType) {
+      case 'admin':
+        this.router.navigate(['/admin']);
+        break;
+      case 'driver':
+        this.router.navigate(['/driver']);
+        break;
+      case 'technician':
+        this.router.navigate(['/technician']);
+        break;
+      case 'user':
+      default:
+        this.router.navigate(['/customer']);
+        break;
+    }
   }
 }
