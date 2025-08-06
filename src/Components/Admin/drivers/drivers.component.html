@@ -1,0 +1,59 @@
+<section class="drivers-section">
+  <h2 class="section-title">OUR VALUED DRIVERS</h2>
+  <p class="section-subtitle">We're proud to serve these amazing professionals</p>
+
+  <div class="container-fluid">
+    <div class="row g-4">
+      <div class="col-xl-3 col-lg-4 col-md-6 col-12" *ngFor="let driver of drivers">
+        <div class="card">
+
+          <!-- Contact buttons in top right -->
+          <div class="contact-buttons">
+            <button class="contact-btn phone-btn" (click)="callDriver(driver)" title="License">
+              <i class="fas fa-id-card"></i>
+            </button>
+            <button class="contact-btn email-btn" (click)="emailDriver(driver)" title="Trips">
+              <i class="fas fa-route"></i>
+            </button>
+          </div>
+
+          <!-- Remove button (icon only) -->
+          <button class="remove-btn-icon" (click)="removeDriver(driver)" title="Remove Driver">
+            <i class="fas fa-times"></i>
+          </button>
+
+          <!-- Profile image -->
+          <img [src]="driver.image" class="profile-img" [alt]="driver.name">
+
+          <!-- Name -->
+          <h5 class="driver-name">{{ driver.name }}</h5>
+
+          <!-- Contact info with icons -->
+          <div class="contact-info">
+            <div class="contact-item">
+              <i class="fas fa-id-card contact-icon"></i>
+              <span class="contact-text">{{ driver.licenseNumber }}</span>
+            </div>
+            <div class="contact-item">
+              <i class="fas fa-calendar contact-icon"></i>
+              <span class="contact-text">{{ driver.experience }}</span>
+            </div>
+            <div class="contact-item">
+              <i class="fas fa-car contact-icon"></i>
+              <span class="contact-text">{{ driver.vehicleType }}</span>
+            </div>
+          </div>
+
+          <!-- Join date -->
+          <div class="join-date">Driving Since: {{ driver.joined }}</div>
+
+          <!-- Action buttons -->
+          <div class="action-footer">
+            <button class="profile-btn" (click)="viewDriverProfile(driver)">PROFILE</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

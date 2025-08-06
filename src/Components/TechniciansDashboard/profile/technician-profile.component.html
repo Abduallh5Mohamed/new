@@ -1,0 +1,259 @@
+ <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-10 col-xl-8">
+                <div class="card profile-card">
+                    <div class="card-body p-4 p-md-5">
+                      
+                        <div class="card-header-custom d-flex justify-content-between align-items-center pb-3 mb-4">
+                            <h2 class="page-title h2 mb-0">Technician Information</h2>
+                            <div class="technician-badge" [class]="'badge-' + currentTechnician.technicianType.toLowerCase()">
+                                {{ currentTechnician.technicianType }}
+                            </div>
+                        </div>
+
+                        <form [formGroup]="technicianForm" (ngSubmit)="onSubmit()">
+                       
+                            <div class="text-center mb-4">
+                                <div class="position-relative d-inline-block mb-3 photo-container">
+                                    <img [src]="currentTechnician.avatar" [alt]="currentTechnician.fullName" class="profile-photo">
+                                    <div class="photo-overlay">
+                                        <input type="file" id="photoInput" (change)="onPhotoChange($event)" accept="image/*" class="d-none">
+                                        <label for="photoInput" class="change-photo-btn">
+                                            <i class="fas fa-camera me-1"></i>
+                                            Change Photo
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                            </div>
+
+                        
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="fullName" class="form-label">Full Name</label>
+                                    <input 
+                                        type="text" 
+                                        class="form-control" 
+                                        id="fullName" 
+                                        formControlName="fullName"
+                                        [class.is-invalid]="technicianForm.get('fullName')?.invalid && technicianForm.get('fullName')?.touched"
+                                    >
+                                    <div class="invalid-feedback" *ngIf="technicianForm.get('fullName')?.invalid && technicianForm.get('fullName')?.touched">
+                                        Full name is required (minimum 3 characters)
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input 
+                                        type="email" 
+                                        class="form-control" 
+                                        id="email" 
+                                        formControlName="email"
+                                        [class.is-invalid]="technicianForm.get('email')?.invalid && technicianForm.get('email')?.touched"
+                                    >
+                                    <div class="invalid-feedback" *ngIf="technicianForm.get('email')?.invalid && technicianForm.get('email')?.touched">
+                                        Please enter a valid email
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="phone" class="form-label">Phone</label>
+                                    <input 
+                                        type="tel" 
+                                        class="form-control" 
+                                        id="phone" 
+                                        formControlName="phone"
+                                        [class.is-invalid]="technicianForm.get('phone')?.invalid && technicianForm.get('phone')?.touched"
+                                    >
+                                    <div class="invalid-feedback" *ngIf="technicianForm.get('phone')?.invalid && technicianForm.get('phone')?.touched">
+                                        Phone number is required
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="completedServices" class="form-label">Completed Services</label>
+                                    <input 
+                                        type="number" 
+                                        class="form-control" 
+                                        id="completedServices" 
+                                        formControlName="completedServices"
+                                        readonly
+                                    >
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="specialization" class="form-label">Specialization</label>
+                                    <select 
+                                        id="specialization" 
+                                        formControlName="specialization" 
+                                        class="form-select form-control"
+                                        [class.is-invalid]="technicianForm.get('specialization')?.invalid && technicianForm.get('specialization')?.touched"
+                                    >
+                                        <option value="">Select Specialization</option>
+                                        <option *ngFor="let spec of specializations" [value]="spec">{{ spec }}</option>
+                                    </select>
+                                    <div class="invalid-feedback" *ngIf="technicianForm.get('specialization')?.invalid && technicianForm.get('specialization')?.touched">
+                                        Specialization is required
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="experience" class="form-label">Experience (Years)</label>
+                                    <input 
+                                        type="number" 
+                                        class="form-control" 
+                                        id="experience" 
+                                        formControlName="experience"
+                                        min="0" 
+                                        [class.is-invalid]="technicianForm.get('experience')?.invalid && technicianForm.get('experience')?.touched"
+                                    >
+                                    <div class="invalid-feedback" *ngIf="technicianForm.get('experience')?.invalid && technicianForm.get('experience')?.touched">
+                                        Experience is required
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="hourlyRate" class="form-label">Hourly Rate (EGP)</label>
+                                    <input 
+                                        type="number" 
+                                        class="form-control" 
+                                        id="hourlyRate" 
+                                        formControlName="hourlyRate"
+                                        min="50" 
+                                        [class.is-invalid]="technicianForm.get('hourlyRate')?.invalid && technicianForm.get('hourlyRate')?.touched"
+                                    >
+                                    <div class="invalid-feedback" *ngIf="technicianForm.get('hourlyRate')?.invalid && technicianForm.get('hourlyRate')?.touched">
+                                        Hourly rate is required (minimum 50 EGP)
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="technicianType" class="form-label">Technician Level</label>
+                                    <select id="technicianType" formControlName="technicianType" class="form-select form-control">
+                                        <option value="Junior">Junior</option>
+                                        <option value="Senior">Senior</option>
+                                        <option value="Expert">Expert</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-12">
+                                    <label for="workingArea" class="form-label">Working Area</label>
+                                    <select id="workingArea" formControlName="workingArea" class="form-select form-control">
+                                        <option value="">Select Area</option>
+                                        <option value="Downtown Area">Downtown Area</option>
+                                        <option value="North District">North District</option>
+                                        <option value="South District">South District</option>
+                                        <option value="East District">East District</option>
+                                        <option value="West District">West District</option>
+                                        <option value="Business District">Business District</option>
+                                        <option value="Residential Area">Residential Area</option>
+                                        <option value="Industrial Zone">Industrial Zone</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-12">
+                                    <label for="address" class="form-label">Full Address</label>
+                                    <textarea 
+                                        id="address" 
+                                        class="form-control" 
+                                        formControlName="address"
+                                        rows="3" 
+                                        placeholder="Enter complete address..."
+                                    ></textarea>
+                                </div>
+                            </div>
+
+                            
+                            <div class="technician-stats p-4 mt-4">
+                                <h3 class="h5 text-center mb-3">Technician Statistics</h3>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <div class="stat-card p-3">
+                                            <div class="d-flex align-items-center">
+                                               
+                                                <div>
+                                                    <small class="text-muted d-block">Join Date</small>
+                                                    <strong>{{ currentTechnician.joinDate }}</strong>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        <div class="stat-card p-3">
+                                            <div class="d-flex align-items-center">
+                                               
+                                                <div>
+                                                    <small class="text-muted d-block">Last Service</small>
+                                                    <strong>{{ currentTechnician.lastService }}</strong>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="stat-card p-3">
+                                            <div class="d-flex align-items-center">
+                                              
+                                                <div>
+                                                    <small class="text-muted d-block">Rating</small>
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="rating-stars me-2">
+                                                            <span *ngFor="let star of getStars(currentTechnician.rating)" 
+                                                                  [class]="star === '★' ? 'filled-star' : 'empty-star'">{{ star }}</span>
+                                                        </div>
+                                                        <strong>({{ currentTechnician.rating }})</strong>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="stat-card p-3">
+                                            <div class="d-flex align-items-center">
+                                              
+                                                <div>
+                                                    <small class="text-muted d-block">Hourly Rate</small>
+                                                    <strong>{{ currentTechnician.hourlyRate }} EGP</strong>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                          
+                            <div class="certifications-section p-4 mt-4">
+                                <h3 class="h5 text-center mb-3">Certifications</h3>
+                                <div class="d-flex flex-wrap justify-content-center gap-2">
+                                    <span *ngFor="let cert of currentTechnician.certifications" class="badge certification-badge px-3 py-2">
+                                        {{ cert }}
+                                    </span>
+                                </div>
+                            </div>
+
+                       
+                            <div class="d-flex justify-content-center gap-3 mt-4 pt-3">
+                                <button type="submit" class="btn btn-primary-custom px-4" [disabled]="technicianForm.invalid">
+                                   
+                                    Update Profile
+                                </button>
+                                
+                                <button type="button" class="btn btn-secondary-custom px-4" (click)="onCancel()">
+                                   
+                                    Cancel
+                                </button>
+                                
+                                <button type="button" class="btn btn-danger-custom px-4" (click)="onDelete()">
+                                    
+                                    Delete Technician
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
