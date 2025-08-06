@@ -38,11 +38,12 @@ export class LoginComponent {
         const { email, password } = this.loginForm.value;
         const userData = await this.authService.signIn(email, password);
         
-        // Check if email is verified
-        if (this.authService.isEmailVerified()) {
-          this.routeToUserDashboard(userData.role);
-        } else {
+        // Always check email verification first
+        if (!this.authService.isEmailVerified()) {
           this.router.navigate(['/auth/pending-verification']);
+        } else {
+          // Route based on user role only if verified
+          this.routeToUserDashboard(userData.role);
         }
       } catch (error: any) {
         this.errorMessage = error;

@@ -109,22 +109,4 @@ export class SignUpComponent {
     }
     return '';
   }
-
-  private routeToUserDashboard(userType: string): void {
-    switch (userType) {
-      case 'admin':
-        this.router.navigate(['/admin']);
-        break;
-      case 'driver':
-        this.router.navigate(['/driver']);
-        break;
-      case 'technician':
-        this.router.navigate(['/technician']);
-        break;
-      case 'user':
-      default:
-        this.router.navigate(['/customer']);
-        break;
-    }
-  }
 }
